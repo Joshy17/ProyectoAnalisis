@@ -143,8 +143,8 @@ Este actor está relacionado con los siguientes casos de uso:
 - **CU-01RF-02:** Registrar cita médica
 - **CU-01RF-03:** Cancelar cita médica
 - **CU-01RF-04:** Consultar historial de citas
-- **CU-01RF-05:** Confirmar estado de la cita (notificación por correo)
 - **CU-01RF-06:** Consultar disponibilidad de citas
+- **CU-I-01:** Envio de notificación
 
 #### Especificaciones de Interfaz
 
@@ -437,7 +437,7 @@ Este caso de uso permite que un estudiante cancele una cita médica previamente 
 
 * *Si la cancelación está dentro del plazo permitido*, el sistema solicita la confirmación de cancelación.
 * *Si la cancelación está fuera del plazo permitido*, el sistema muestra un mensaje indicando que la cita no puede ser cancelada por estar fuera del plazo permitido.
-7.   El estudiante confirma y el sistema cancela la cita, enviando una notificación.
+7.   El estudiante confirma y el sistema cancela la cita, enviando una notificación.*\[CU-I-01\](Envio de notificaciones.)*
 
 
 ### Flujo Alternativo
@@ -1113,6 +1113,87 @@ Este caso de uso permite que un doctor cancele una cita previamente registrada e
 ### Autor:
 
 - Claudia Ulloa Campabadal
+
+  ---
+
+## CU-I-01: Envio de notificaciones. 
+
+Caso de uso por inclusion
+
+#### Descripción: 
+
+Este caso de uso por inclusion permite que otros casos de uso implementen el sistema de envio de notificaciones. 
+
+### Actores:
+
+**Estudiante** 
+**Doctor**   
+**Sistema**
+
+#### Precondiciones
+
+* El correo electrónico del estudiante debe ser válido y estar registrado en el sistema.
+
+#### PostCondiciones
+
+* El sistema registra el estado del envío de la notificación.
+
+### Flujo Principal 
+
+1\. **Acción del Estudiante:** El estudiante realiza una acción en el sistema (programar, modificar o cancelar una cita).   
+2\. **Generación de Notificación:** El sistema genera una notificación con los detalles relevantes de la cita.   
+3\. **Envío de Notificación:** El sistema intenta enviar el correo electrónico al estudiante. El mensaje debe incluir: 
+
+* **Para confirmación:** Fecha y hora de la cita, nombre del médico, especialidad, ubicación, y cualquier instrucción adicional.
+* **Para cancelación:** Detalles de la cita cancelada y un mensaje de confirmación de la cancelación.
+* **Para modificación:** Los detalles actualizados de la cita, indicando los cambios realizados.
+
+[**FA-01**](#fa-01-error-en-el-envío-del-correo): Si ocurre un error en el envío del correo, el sistema procede con el flujo alternativo FA-01.
+
+####  Flujo Alternativo
+
+**FA-01: Error en el Envío del Correo**
+
+* **Error en el envío**: Si el correo electrónico no se envía con éxito, el sistema intentará reenviar el mensaje hasta tres veces. Si el envío falla tras estos intentos, el sistema notificará el fallo al equipo técnico.
+
+### Detalles del mensaje
+
+**Confirmación de Cita:**
+
+* Asunto: "Confirmación de Cita - \\\[Nombre del Médico/Especialidad\\\]"
+* Cuerpo del correo: "Estimado/a \\\[Nombre del Estudiante\\\], su cita ha sido confirmada para el \\\[Fecha\\\] a las \\\[Hora\\\] con el \\\[Nombre del Médico\\\], especialista en \\\[Especialidad\\\]. Ubicación: \\\[Dirección\\\]."
+* **Cancelación de Cita:**
+* Asunto: "Cancelación de Cita - \\\[Nombre del Médico/Especialidad\\\]"
+* Cuerpo del correo: "Estimado/a \\\[Nombre del Estudiante\\\], su cita programada para el \\\[Fecha\\\] a las \\\[Hora\\\] ha sido cancelada. Si desea programar una nueva cita, por favor acceda al sistema."
+* **Modificación de Cita:**
+* Asunto: "Actualización de Cita - \\\[Nombre del Médico/Especialidad\\\]"
+* Cuerpo del correo: "Estimado/a \\\[Nombre del Estudiante\\\], su cita ha sido actualizada. Los nuevos detalles son: Fecha: \\\[Nueva Fecha\\\], Hora: \\\[Nueva Hora\\\], Médico: \\\[Nombre del Médico\\\], Especialidad: \\\[Especialidad\\\]."
+* **Recordatorio de Cita:**
+* Asunto: "Recordatorio de Cita - \\\[Nombre del Médico/Especialidad\\\]"
+* Cuerpo del correo: "Estimado/a \\\[Nombre del Estudiante\\\], le recordamos su cita programada para el \\\[Fecha\\\] a las \\\[Hora\\\] con el \\\[Nombre del Médico\\\]. Por favor llegue con 10 minutos de anticipación. Ubicación: \\\[Dirección\\\]."   
+ 
+
+**Escenarios de Prueba**
+------------------------
+
+| **Entrada** | **Acción** | **Resultado Esperado** |
+| --- | --- | --- |
+| Cita agendada | Envío de confirmación | El estudiante recibe un correo de confirmación con los detalles de la cita. |
+| Cita cancelada | Envío de cancelación | El estudiante recibe un correo notificando la cancelación de la cita. |
+| Cita modificada | Envío de actualización | El estudiante recibe un correo con los detalles actualizados de la cita. |
+| Dos días antes de cita | Envío de recordatorio | El estudiante recibe un recordatorio de la cita dos días antes de la fecha programada. |
+| Error en el correo | Reintento de envío | El sistema intenta reenviar el correo hasta tres veces antes de notificar un fallo al equipo técnico. |
+
+Casos de Uso donde se usara 
+----------------------------
+
+\* CU-01RF02 Registrar Citas Médicas   
+\* CU-01RF11  Cancelar cita estudiante
+
+Actor 
+------
+
+Randall Vargas
 
 
 
